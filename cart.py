@@ -12,7 +12,7 @@ class CART:
         self.max_depth = max_depth
         self.depth = 0
     
-    def fit(self, X_train, y_train):
+    def fit(self, X_train, y_train) -> None:
         if len(np.unique(y_train)) == 1:
             self.leaf = True
             self.val = y_train[0]
@@ -29,8 +29,6 @@ class CART:
                         self.val = t
             elif self.impurity_function == "mse":
                 self.val = np.mean(y_train)
-
-
             return
             
 
@@ -70,7 +68,7 @@ class CART:
 
 
 
-    def calc_impurity(self, y_train):
+    def calc_impurity(self, y_train) -> float:
         y_train = np.array(y_train)
         if self.impurity_function == "gini":
             impurity = 1
