@@ -1,12 +1,14 @@
 import numpy as np
 
 class CART:
-    def __init__(self, impurity_function="gini") -> None:
+    def __init__(self, impurity_function="gini", max_depth = None) -> None:
         self.leaf = True
         self.val = None
         self.left = None
         self.right = None
         self.impurity_function = impurity_function
+        self.max_depth = max_depth
+        self.depth = 0
     
     def fit(self, X_train, y_train):
         if len(np.unique(y_train)) == 1:
@@ -15,6 +17,20 @@ class CART:
             return
         else:
             self.leaf = False
+        if self.depth >= self.max_depth:
+            self.leaf = True
+            if self.impurity_function == "gini":
+                best_count = 0
+                for t in np.unique(y_train):
+                    if np.sum(y_train==t) > best_count:
+                        best_count = np.sum(y_train==t)
+                        self.val = t
+            elif self.impurity_function == "mse":
+                self.val = np.mean(y_train)
+
+
+            return
+            
 
         X_train = np.array(X_train)
         y_train = np.array(y_train)
@@ -34,7 +50,7 @@ class CART:
                     print(thresh,X_train[:,i] <= thresh , y_train.shape)
                 right_y = y_train[X_train[:,i] > thresh]
                 current_impurity = impurity - len(left_y)/len(X_train)*self.calc_impurity(left_y) + len(right_y)/len(X_train) * self.calc_impurity(right_y)
-                if  current_impurity >= best_impurity:
+                if  current_impurity > best_impurity:
                     best_impurity = current_impurity
                     best_feature = i
                     best_feature_thresh = thresh
@@ -50,9 +66,13 @@ class CART:
 
         self.best_feature = best_feature
         self.best_feature_thresh = best_feature_thresh
-        self.left = CART(impurity_function=self.impurity_function)
+        
+        self.left = CART(impurity_function=self.impurity_function, max_depth=self.max_depth)
+        self.left.depth = self.depth+1
         self.left.fit(X_train[X_train[:,best_feature] <= best_feature_thresh], y_train[X_train[:,best_feature] <= best_feature_thresh])
-        self.right = CART(impurity_function=self.impurity_function)
+        
+        self.right = CART(impurity_function=self.impurity_function, max_depth=self.max_depth)
+        self.right.depth = self.depth+1
         self.right.fit(X_train[X_train[:,best_feature] > best_feature_thresh], y_train[X_train[:,best_feature] > best_feature_thresh])
 
 

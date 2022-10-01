@@ -7,3 +7,4 @@
         - [ ] Entropy
         - [x] MSE
         - [ ] Half Poisson deviance
+   - [ ] Max Depth
