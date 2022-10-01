@@ -44,10 +44,7 @@ class CART:
             thresholds = (feature_vals[:-1] + feature_vals[1:])/2.0
 
             for thresh in thresholds:
-                try:
-                    left_y = y_train[X_train[:,i] <= thresh]
-                except:
-                    print(thresh,X_train[:,i] <= thresh , y_train.shape)
+                left_y = y_train[X_train[:,i] <= thresh]
                 right_y = y_train[X_train[:,i] > thresh]
                 current_impurity = impurity - len(left_y)/len(X_train)*self.calc_impurity(left_y) - len(right_y)/len(X_train) * self.calc_impurity(right_y)
                 if  current_impurity >= best_impurity:
@@ -113,11 +110,7 @@ class CART:
 
 
 def get_explanation(tree_root):
-    # print(tree_root)
-    # if not tree_root:
-    #     return ""
-    # print(tree_root.leaf, tree_root.depth)
     if tree_root.leaf:
-        return "|   " * (tree_root.depth) + "|--- value: " + str(tree_root.val) + "\n"
-    return "|   " * (tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}<={tree_root.best_feature_thresh}:\n{get_explanation(tree_root.left)}" \
-        + "|   " * (tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}>{tree_root.best_feature_thresh}:\n{get_explanation(tree_root.right)}"
+        return "|   " * (tree_root.depth) + f"|--- {'class: '+ str(tree_root.val) if tree_root.impurity_function in ['gini','entropy'] else f'value: [{tree_root.val:.2f}]'}"  + "\n"
+    return "|   " * (tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature} <= {tree_root.best_feature_thresh:.2f}\n{get_explanation(tree_root.left)}" \
+        + "|   " * (tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature} >  {tree_root.best_feature_thresh:.2f}\n{get_explanation(tree_root.right)}"

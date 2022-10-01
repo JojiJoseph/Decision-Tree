@@ -2,12 +2,12 @@ from cart import CART, get_explanation
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 import numpy as np
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier, export_text
 
 X_data, y_data = load_iris(return_X_y=True)
 
 
-X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, random_state = 42)
+X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, random_state=42)
 
 print("Testing custom CART")
 cart = CART(impurity_function="gini")
@@ -26,3 +26,8 @@ def test_impurity():
     cart = CART()
     assert cart.calc_impurity([1,1,1,1]) == 0
     assert cart.calc_impurity([1,2,1,2]) == 0.5
+print("\nExplanation of custom CART")
+print(get_explanation(cart))
+
+print("\nExplanation of sklearn CART")
+print(export_text(clf))
