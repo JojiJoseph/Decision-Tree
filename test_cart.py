@@ -27,6 +27,27 @@ clf = DecisionTreeClassifier(min_samples_split=2)
 clf.fit(X_train, y_train)
 print(np.mean(clf.predict(X_train).astype(int) == y_train))
 
+"Regression Test"
+
+X_data = np.linspace(0,1,100).reshape((-1,1))
+y_data = np.sin(2*np.pi*X_data).flatten()
+X_train, X_test, y_train, y_test = train_test_split(X_data, y_data)
+
+cart_reg = CART(impurity_function="mse")
+
+cart_reg.fit(X_train, y_train)
+
+# X_test
+
+y_pred = cart_reg.predict(X_test)
+
+import matplotlib.pyplot as plt
+
+plt.plot(X_data.flatten(), y_data)
+plt.scatter(X_test.flatten(), y_pred)
+plt.plot()
+plt.show()
+
 def test_impurity():
     cart = CART()
     assert cart.calc_impurity([1,1,1,1]) == 0

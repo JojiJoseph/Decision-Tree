@@ -1,15 +1,14 @@
 import numpy as np
 
 class CART:
-    def __init__(self) -> None:
+    def __init__(self, impurity_function="gini") -> None:
         self.leaf = True
-        self.val = -1
+        self.val = None
         self.left = None
         self.right = None
+        self.impurity_function = impurity_function
+    
     def fit(self, X_train, y_train):
-        # print(len(X_train))
-        # y_train = y_train.reshape((-1,1))
-        # self.leaf = False
         if len(np.unique(y_train)) == 1:
             self.leaf = True
             self.val = y_train[0]
@@ -27,11 +26,6 @@ class CART:
         for i in range(n_features):
             feature_vals = np.unique(X_train[:,i]) # unique returns sorted array. So no need to sort again
             thresholds = (feature_vals[:-1] + feature_vals[1:])/2.0
-            # if len(thresholds) == 0:
-            #     print("feature_vals", feature_vals, "thresholds", thresholds)
-            #     exit()
-            # print(thresholds)
-            # if not thresholds:
 
             for thresh in thresholds:
                 try:
@@ -44,34 +38,37 @@ class CART:
                     best_impurity = current_impurity
                     best_feature = i
                     best_feature_thresh = thresh
-        if not best_feature_thresh:
-            self.leaf = True
-            best_count = 0
-            for t in np.unique(y_train):
-                if np.sum(y_train==t) > best_count:
-                    best_count = np.sum(y_train==t)
-                    self.val = t
+        # if not best_feature_thresh:
+        #     self.leaf = True
+        #     best_count = 0
+        #     for t in np.unique(y_train):
+        #         if np.sum(y_train==t) > best_count:
+        #             best_count = np.sum(y_train==t)
+        #             self.val = t
 
-            return
+        #     return
 
         self.best_feature = best_feature
         self.best_feature_thresh = best_feature_thresh
-        self.left = CART()
+        self.left = CART(impurity_function=self.impurity_function)
         self.left.fit(X_train[X_train[:,best_feature] <= best_feature_thresh], y_train[X_train[:,best_feature] <= best_feature_thresh])
-        self.right = CART()
+        self.right = CART(impurity_function=self.impurity_function)
         self.right.fit(X_train[X_train[:,best_feature] > best_feature_thresh], y_train[X_train[:,best_feature] > best_feature_thresh])
 
 
 
     def calc_impurity(self, y_train):
         y_train = np.array(y_train)
-        impurity = 1
-        classes = np.unique(y_train)
-        l = len(y_train)
-        for c in classes:
-            lc = len(y_train[y_train == c])
-            impurity -= (lc/l)**2
-        return impurity
+        if self.impurity_function == "gini":
+            impurity = 1
+            classes = np.unique(y_train)
+            l = len(y_train)
+            for c in classes:
+                lc = len(y_train[y_train == c])
+                impurity -= (lc/l)**2
+            return impurity
+        elif self.impurity_function == "mse":
+            return np.mean((y_train-np.mean(y_train))**2)
 
     def predict(self, X_test):
         # return None

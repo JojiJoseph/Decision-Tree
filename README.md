@@ -2,8 +2,8 @@
 
 ## TODO
  - [ ] CART
-  - [ ] Impurity
-   - [x] Gini
-   - [ ] Entropy
-   - [ ] MSE
-   - [ ] Half Poisson deviance
+   - [ ] Impurity
+        - [x] Gini
+        - [ ] Entropy
+        - [x] MSE
+        - [ ] Half Poisson deviance
