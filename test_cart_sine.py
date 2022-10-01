@@ -1,9 +1,10 @@
-from cart import CART
+from cart import CART, get_explanation
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 import matplotlib.pyplot as plt
+from sklearn.tree import export_text
 
 "Regression Test"
 
@@ -17,6 +18,8 @@ clf = DecisionTreeRegressor(max_depth=5)
 clf.fit(X_data, y_data)
 
 cart_reg.fit(X_data, y_data)
+# explanation = get_explanation(cart_reg)
+# print(explanation)
 
 X_test = np.linspace(0,1,1000).reshape((-1,1))
 y_test = np.sin(2*np.pi*X_test).flatten()
@@ -40,6 +43,7 @@ reg = DecisionTreeRegressor(max_depth=5)
 reg.fit(X_data, y_data)
 
 
+
 X_test = np.linspace(0,1,1000).reshape((-1,1))
 y_test = np.sin(2*np.pi*X_test).flatten()
 y_pred1 = reg.predict(X_test)
@@ -54,3 +58,5 @@ plt.plot(X_test.flatten(), y_pred2, label="max depth=10")
 plt.legend()
 # plt.plot(X_test.flatten(), y_pred2, label="max depth=20")
 plt.show()
+
+print(export_text(reg))

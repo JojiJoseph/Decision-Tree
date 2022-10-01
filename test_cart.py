@@ -1,4 +1,4 @@
-from cart import CART
+from cart import CART, get_explanation
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 import numpy as np
@@ -14,6 +14,7 @@ X_train, X_test, y_train, y_test = train_test_split(X_data, y_data)
 cart = CART()
 cart.fit(X_train, y_train)
 print(np.mean(cart.predict(X_test).astype(int) == y_test))
+# print(get_explanation(cart))
 
 clf = DecisionTreeClassifier(min_samples_split=2)
 clf.fit(X_train, y_train)

@@ -1,8 +1,9 @@
+from webbrowser import get
 import numpy as np
 
 class CART:
     def __init__(self, impurity_function="gini", max_depth = None) -> None:
-        self.leaf = True
+        self.leaf = False
         self.val = None
         self.left = None
         self.right = None
@@ -17,7 +18,7 @@ class CART:
             return
         else:
             self.leaf = False
-        if self.depth >= self.max_depth:
+        if self.max_depth and self.depth >= self.max_depth:
             self.leaf = True
             if self.impurity_function == "gini":
                 best_count = 0
@@ -50,19 +51,10 @@ class CART:
                     print(thresh,X_train[:,i] <= thresh , y_train.shape)
                 right_y = y_train[X_train[:,i] > thresh]
                 current_impurity = impurity - len(left_y)/len(X_train)*self.calc_impurity(left_y) + len(right_y)/len(X_train) * self.calc_impurity(right_y)
-                if  current_impurity > best_impurity:
+                if  current_impurity >= best_impurity:
                     best_impurity = current_impurity
                     best_feature = i
                     best_feature_thresh = thresh
-        # if not best_feature_thresh:
-        #     self.leaf = True
-        #     best_count = 0
-        #     for t in np.unique(y_train):
-        #         if np.sum(y_train==t) > best_count:
-        #             best_count = np.sum(y_train==t)
-        #             self.val = t
-
-        #     return
 
         self.best_feature = best_feature
         self.best_feature_thresh = best_feature_thresh
@@ -112,3 +104,14 @@ class CART:
             return self.left.predict_individual(X)
         else:
             return self.right.predict_individual(X)
+
+
+def get_explanation(tree_root):
+    # print(tree_root)
+    # if not tree_root:
+    #     return ""
+    # print(tree_root.leaf, tree_root.depth)
+    if tree_root.leaf:
+        return "|   " * (3*tree_root.depth) + "|--- value: " + str(tree_root.val) + "\n"
+    return "|   " * (3*tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}<={tree_root.best_feature_thresh}:\n{get_explanation(tree_root.left)}" \
+        + "|   " * (3*tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}>{tree_root.best_feature_thresh}:\n{get_explanation(tree_root.right)}"
