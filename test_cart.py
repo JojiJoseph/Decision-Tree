@@ -11,7 +11,7 @@ X_train, X_test, y_train, y_test = train_test_split(X_data, y_data)
 
 # print(X_test.shape)
 
-cart = CART()
+cart = CART(impurity_function="entropy")
 cart.fit(X_train, y_train)
 print(np.mean(cart.predict(X_test).astype(int) == y_test))
 # print(get_explanation(cart))

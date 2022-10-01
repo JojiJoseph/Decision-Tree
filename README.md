@@ -2,9 +2,11 @@
 
 ## TODO
  - [ ] CART
-   - [ ] Impurity
+   - [x] Impurity
         - [x] Gini
-        - [ ] Entropy
+        - [x] Entropy
         - [x] MSE
-        - [ ] Half Poisson deviance
    - [x] Max Depth
+   - [ ] Test
+   - [ ] Later
+        - [ ] Half Poisson deviance

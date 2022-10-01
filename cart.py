@@ -1,5 +1,6 @@
 from webbrowser import get
 import numpy as np
+from collections import Counter
 
 class CART:
     def __init__(self, impurity_function="gini", max_depth = None) -> None:
@@ -20,7 +21,7 @@ class CART:
             self.leaf = False
         if self.max_depth and self.depth >= self.max_depth:
             self.leaf = True
-            if self.impurity_function == "gini":
+            if self.impurity_function in ["gini", "entropy"]:
                 best_count = 0
                 for t in np.unique(y_train):
                     if np.sum(y_train==t) > best_count:
@@ -81,6 +82,13 @@ class CART:
             return impurity
         elif self.impurity_function == "mse":
             return np.mean((y_train-np.mean(y_train))**2)
+        elif self.impurity_function == "entropy":
+            counter = Counter(y_train)
+            l = len(y_train)
+            impurity = 0
+            for k in counter:
+                impurity -= counter[k]/l *np.log2(counter[k]/l)
+            return impurity
 
     def predict(self, X_test):
         # return None
@@ -112,6 +120,6 @@ def get_explanation(tree_root):
     #     return ""
     # print(tree_root.leaf, tree_root.depth)
     if tree_root.leaf:
-        return "|   " * (3*tree_root.depth) + "|--- value: " + str(tree_root.val) + "\n"
-    return "|   " * (3*tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}<={tree_root.best_feature_thresh}:\n{get_explanation(tree_root.left)}" \
-        + "|   " * (3*tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}>{tree_root.best_feature_thresh}:\n{get_explanation(tree_root.right)}"
+        return "|   " * (tree_root.depth) + "|--- value: " + str(tree_root.val) + "\n"
+    return "|   " * (tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}<={tree_root.best_feature_thresh}:\n{get_explanation(tree_root.left)}" \
+        + "|   " * (tree_root.depth) + "|--- " + f"feature_{tree_root.best_feature}>{tree_root.best_feature_thresh}:\n{get_explanation(tree_root.right)}"
