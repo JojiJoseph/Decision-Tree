@@ -49,7 +49,7 @@ class CART:
                 except:
                     print(thresh,X_train[:,i] <= thresh , y_train.shape)
                 right_y = y_train[X_train[:,i] > thresh]
-                current_impurity = impurity - len(left_y)/len(X_train)*self.calc_impurity(left_y) + len(right_y)/len(X_train) * self.calc_impurity(right_y)
+                current_impurity = impurity - len(left_y)/len(X_train)*self.calc_impurity(left_y) - len(right_y)/len(X_train) * self.calc_impurity(right_y)
                 if  current_impurity >= best_impurity:
                     best_impurity = current_impurity
                     best_feature = i

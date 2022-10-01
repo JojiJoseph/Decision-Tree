@@ -7,7 +7,7 @@ from sklearn.tree import DecisionTreeClassifier
 X_data, y_data = load_iris(return_X_y=True)
 
 
-X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, random_state=1)
+X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, random_state = 42)
 
 print("Testing custom CART")
 cart = CART(impurity_function="gini")
